@@ -1,37 +1,40 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en-us">
   <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="description" content="Advanced-dynamic-simulations : ">
-
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-
-    <title>Advanced-dynamic-simulations</title>
+    <meta charset="UTF-8">
+    <title>Advanced-dynamic-simulations by Haboric-Hu</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
   </head>
-
   <body>
+    <section class="page-header">
+      <h1 class="project-name">Advanced-dynamic-simulations</h1>
+      <h2 class="project-tagline"></h2>
+      <a href="https://github.com/Haboric-Hu/advanced-dynamic-simulations" class="btn">View on GitHub</a>
+      <a href="https://github.com/Haboric-Hu/advanced-dynamic-simulations/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/Haboric-Hu/advanced-dynamic-simulations/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/Haboric-Hu/advanced-dynamic-simulations">View on GitHub</a>
+    <section class="main-content">
+      <h2>
+<a id="advanced-dynamic-simulations---proposal" class="anchor" href="#advanced-dynamic-simulations---proposal" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Advanced Dynamic Simulations - Proposal</h2>
 
-          <h1 id="project_title">Advanced-dynamic-simulations</h1>
-          <h2 id="project_tagline"></h2>
+<p>Student Names: Anbang Hu, Yang Yu</p>
 
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/Haboric-Hu/advanced-dynamic-simulations/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/Haboric-Hu/advanced-dynamic-simulations/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
-    </div>
+<h3>
+<a id="overview" class="anchor" href="#overview" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Overview</h3>
 
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <p>Student Names: Anbang Hu, Yang Yu</p>
+<p>We will implement </p>
+
+<ul>
+<li>solvers more advanced than forward Euler and simplectic Euler</li>
+<li>bubble dynamics that simulate the evolution of bubbles over time</li>
+</ul>
+
+<p>based on Scotty3D.</p>
 
 <h3>
 <a id="advanced-solvers" class="anchor" href="#advanced-solvers" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Advanced Solvers</h3>
@@ -41,7 +44,30 @@
 <h4>
 <a id="backward-euler" class="anchor" href="#backward-euler" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Backward Euler</h4>
 
-<p>In order to take a backward Euler step, we need to solve a large linear system using linear algebra package <a href="http://eigen.tuxfamily.org/index.php?title=Main_Page">Eigen</a>. We will follow the section titled "Meshes and Matrices" in the <a href="http://www.cs.cmu.edu/%7Ekmcrane/Projects/DGPDEC/paper.pdf">course notes</a> to implement backward Euler.</p>
+<p>Backward Euler update rule</p>
+
+<pre><code>u(t+1) = u(t) + tau * f(u(t+1))
+</code></pre>
+
+<p>has <code>u(t+1)</code> on both sides of the equation. To solve this algebraic equation for unknown <code>u(t+1)</code>, we will try the following two options.</p>
+
+<p><strong>Option I</strong> Fixed-point iteration (First attempt)</p>
+
+<p>We will implement the following iterative algorithm in function <code>Mesh::backward_euler_iterative</code> in <code>mesh.cpp</code>:</p>
+
+<pre><code># Initialization
+u(t+1) = u(t)
+
+# Loop until convergence (absolute error between
+# consecutive u(t+1) is less than tolerance)
+u(t+1) = u(t) + tau * f(u(t+1))
+</code></pre>
+
+<p>We anticipate that this method may requires a large number of iterations before <code>u(t+1)</code> eventually converges.</p>
+
+<p><strong>Option II</strong> Solving linear systems (Power of matrix multiplication)</p>
+
+<p>We will follow the section titled "Meshes and Matrices" in the <a href="http://www.cs.cmu.edu/%7Ekmcrane/Projects/DGPDEC/paper.pdf">course notes</a> and use linear algebra package <a href="http://eigen.tuxfamily.org/index.php?title=Main_Page">Eigen</a> to implement backward Euler in <code>Mesh::backward_euler_matrix()</code> in <code>mesh.cpp</code> for triangle mesh:</p>
 
 <ol>
 <li>Assign unique index to the vertices in the mesh;</li>
@@ -49,30 +75,43 @@
 <li>Solve the linear system that describes the backward Euler update rule.</li>
 </ol>
 
-<p>Backward Euler update rule:</p>
+<p>The linear system we need to solve is</p>
 
-<pre><code>y(n+1) = y(n) + tau * F(t(n+1), y(n+1))
+<pre><code>u(i,t+1) = u(i,t) + 0.5 * tau * sum_j (cot(alpha(i,j)) + cot(beta(i,j))) * (u(j,t+1) - u(i,t+1))
 </code></pre>
 
-<p><strong>TODO: GIVE EQUATIONS OF BACKWARD EULER UPDATE RULE</strong></p>
+<p>where <code>u(i,t)</code> is the configuration of the vertex with index <code>i</code> at time <code>t</code>, <code>sum_j</code> means summation over all neighbors of <code>i</code>. The system can be rewritten as</p>
+
+<pre><code>0 = 0.5 * tau * sum_j (cot(alpha(i,j)) + cot(beta(i,j))) * u(j,t+1) -
+    (0.5 * tau * sum_j (cot(alpha(i,j)) + cot(beta(i,j))) - 1) * u(i,t+1) +
+    u(i,t)
+</code></pre>
+
+<p>according to which we can build a matrix <code>B</code> of size (V+1)-by-(V+1), where V is the number of vertices in the mesh. Each row of <code>B</code> corresponds to the coefficients of one linear equation. The coefficients are arranged in correspondence with <code>u = (u(0,t+1), u(1,t+1),...,u(V-1,t+1), 1)</code>. We can then solve the linear system <code>Bu = 0</code> to get each <code>u(i,t+1)</code>.</p>
+
+<p>We expect that solving linear system can potentially improve the performance of the program.</p>
 
 <h4>
 <a id="improved-euler" class="anchor" href="#improved-euler" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Improved Euler</h4>
 
-<p>We will modify the current forward Euler to an improved Euler by using the following update rule:</p>
+<p>Forward Euler can be improved by considering</p>
 
-<pre><code>y(n+1) = y(n) + 0.5 * tau * (F(t(n), y(n)) + F(t(n+1), y(n) + tau * F(t(n), y(n))))
+<pre><code>u(t+1) = u(t) + 0.5 * tau * (f(u(t)) + f(u(t+1)))
 </code></pre>
 
-<p>This update rule is obtained by applying forward Euler to $y_{n+1}$ inside $F(t, y)$ in the following equation:</p>
+<p>In order to get rid of implicit term <code>f(u(t+1))</code>, we can apply forward Euler to <code>u(t+1)</code> inside <code>f(u(t+1))</code>. Then the improved Euler update rule is:</p>
 
-<pre><code>y(n+1) = y(n) + 0.5 * tau * (F(t(n), y(n)) + F(t(n+1), y(n+1)))
+<pre><code>u(t+1) = u(t) + 0.5 * tau * (f(u(t)) + f(u(t) + tau * f(u(t))))
 </code></pre>
+
+<p>We will implement improved Euler in <code>Mesh::improved_euler()</code> in <code>mesh.cpp</code>.</p>
+
+<p>We expect more stable result from improved Euler than from forward Euler.</p>
 
 <h3>
 <a id="bubble-dynamics" class="anchor" href="#bubble-dynamics" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Bubble Dynamics</h3>
 
-<p>We will following <a href="http://www.cs.columbia.edu/cg/doublebubbles/doublebubbles.pdf">this paper</a> to simulate the way bubbles evolve over time.</p>
+<p>We will follow <a href="http://www.cs.columbia.edu/cg/doublebubbles/doublebubbles.pdf">this paper</a> to simulate the way bubbles evolve over time.</p>
 
 <h4>
 <a id="one-bubble-with-dirichlet-boundary" class="anchor" href="#one-bubble-with-dirichlet-boundary" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>One bubble with Dirichlet boundary</h4>
@@ -87,18 +126,15 @@
 <p>After we get one bubble dynamics to work, we will try implemeting multiple interacting bubbles and optimizing the program to make things faster. </p>
 
 <p><strong>TODO: NEED SOME MOTIVATING IMAGES</strong></p>
-      </section>
-    </div>
 
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Advanced-dynamic-simulations maintained by <a href="https://github.com/Haboric-Hu">Haboric-Hu</a></p>
-        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/Haboric-Hu/advanced-dynamic-simulations">Advanced-dynamic-simulations</a> is maintained by <a href="https://github.com/Haboric-Hu">Haboric-Hu</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
       </footer>
-    </div>
 
-    
+    </section>
 
+  
   </body>
 </html>
