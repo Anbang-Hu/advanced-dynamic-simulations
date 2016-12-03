@@ -31,7 +31,7 @@
 
 <ul>
 <li>solvers more advanced than forward Euler and simplectic Euler</li>
-<li>bubble dynamics that simulate the evolution of bubbles over time</li>
+<li>some 3D deformation algorithm(s)</li>
 </ul>
 
 <p>based on Scotty3D.</p>
@@ -39,7 +39,8 @@
 <h3>
 <a id="advanced-solvers" class="anchor" href="#advanced-solvers" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Advanced Solvers</h3>
 
-<p>We have implemented forward Euler and simplectic Euler in Assignment 4. We will explore another two stable integration methods - <a href="https://math.la.asu.edu/%7Edajones/class/275/ch2.pdf">backward Euler and improved Euler</a>.</p>
+<p>We have implemented forward Euler and simplectic Euler in Assignment 4. We will explore another two stable integration methods - <a href="https://math.la.asu.edu/%7Edajones/class/275/ch2.pdf">backward Euler and improved Euler</a>.
+<img src="https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/master/figures/example_img4.png?raw=true" alt="bunny_wave"></p>
 
 <h4>
 <a id="backward-euler" class="anchor" href="#backward-euler" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Backward Euler</h4>
@@ -53,7 +54,7 @@
 
 <p><strong>Option I</strong> Fixed-point iteration (First attempt)</p>
 
-<p>We will implement the following iterative algorithm in function <code>Mesh::backward_euler_iterative</code> in <code>mesh.cpp</code>:</p>
+<p>We will implement the following iterative algorithm in function <code>Mesh::backward_euler_iterative()</code> in <code>mesh.cpp</code>:</p>
 
 <pre><code># Initialization
 u(t+1) = u(t)
@@ -109,23 +110,29 @@ u(t+1) = u(t) + tau * f(u(t+1))
 <p>We expect more stable result from improved Euler than from forward Euler.</p>
 
 <h3>
-<a id="bubble-dynamics" class="anchor" href="#bubble-dynamics" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Bubble Dynamics</h3>
+<a id="3d-deformation" class="anchor" href="#3d-deformation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>3D Deformation</h3>
 
-<p>We will follow <a href="http://www.cs.columbia.edu/cg/doublebubbles/doublebubbles.pdf">this paper</a> to simulate the way bubbles evolve over time.</p>
+<p>3D deformation deforms a mesh but tries to preserve as much details as possible. Here are two motivating examples:
+<img src="https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/master/figures/example_img1.png?raw=true" alt="horse_deformation">
+<img src="https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/master/figures/example_img2.png?raw=true" alt="beast_deformation"></p>
+
+<p>We will implement the following:</p>
+
+<ol>
+<li>Create an API for the user to select several control points for surface deformation;</li>
+<li>Create a data structure that holds control points;</li>
+<li>Update each vertex's position depending on the new position of control points and different update rules; </li>
+<li>Repeat step 3 until convergence.</li>
+</ol>
+
+<p>There are several reasonable rules for updating the vertex position. We will implement <a href="https://www.cs.ubc.ca/%7Evlady/Papers/sketch_0268.pdf">shape preserving mesh deformation</a> and, if time permits, a differential method that minimizes an energy function in using laplacian coordinates to update the position, as described in Chapter 3 of <a href="http://www.gmrv.es/%7Eaperez/PFM_Alvaro_Perez.pdf">this paper</a>.</p>
 
 <h4>
-<a id="one-bubble-with-dirichlet-boundary" class="anchor" href="#one-bubble-with-dirichlet-boundary" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>One bubble with Dirichlet boundary</h4>
+<a id="global-vs-local-need-guidance" class="anchor" href="#global-vs-local-need-guidance" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Global vs local (Need guidance)</h4>
 
-<p>We will start with one bubble with Dirichlet boundary without any optimization.</p>
+<p>We intend to implement an API that does not allow the user to choose a region of interest to deform, but only control points. The deformation carried out by update rules will be global. We think it will be easier to start with, but it seems that the ability to select a region of interest makes a lot of sense. Can we make region of interest an optional bullet point we can choose to implement if we have time?</p>
 
-<p><strong>TODO: PDE WITH DIRICHLET BOUNDARY AND UPDATE RULE</strong></p>
-
-<h4>
-<a id="multiple-interacting-bubbles-and-optimization" class="anchor" href="#multiple-interacting-bubbles-and-optimization" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Multiple interacting bubbles and optimization</h4>
-
-<p>After we get one bubble dynamics to work, we will try implemeting multiple interacting bubbles and optimizing the program to make things faster. </p>
-
-<p><strong>TODO: NEED SOME MOTIVATING IMAGES</strong></p>
+<p><strong>NOTE:</strong> Also we make implementing mesh deformation as energy minimization problem as extended work if time permits.</p>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/Haboric-Hu/advanced-dynamic-simulations">Advanced-dynamic-simulations</a> is maintained by <a href="https://github.com/Haboric-Hu">Haboric-Hu</a>.</span>
