@@ -5,12 +5,13 @@ Student Names: Anbang Hu, Yang Yu
 ### Overview
 We will implement 
 - solvers more advanced than forward Euler and simplectic Euler
-- bubble dynamics that simulate the evolution of bubbles over time
+- some 3D deformation algorithm(s)
 
 based on Scotty3D.
 
 ### Advanced Solvers
 We have implemented forward Euler and simplectic Euler in Assignment 4. We will explore another two stable integration methods - [backward Euler and improved Euler](https://math.la.asu.edu/~dajones/class/275/ch2.pdf).
+![bunny_wave](https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/master/figures/example_img4.png?raw=true)
 
 #### Backward Euler
 Backward Euler update rule
@@ -22,7 +23,7 @@ has ```u(t+1)``` on both sides of the equation. To solve this algebraic equation
 
 __Option I__ Fixed-point iteration (First attempt)
 
-We will implement the following iterative algorithm in function ```Mesh::backward_euler_iterative``` in ```mesh.cpp```:
+We will implement the following iterative algorithm in function ```Mesh::backward_euler_iterative()``` in ```mesh.cpp```:
 ```
 # Initialization
 u(t+1) = u(t)
@@ -69,15 +70,23 @@ We will implement improved Euler in ```Mesh::improved_euler()``` in ```mesh.cpp`
 
 We expect more stable result from improved Euler than from forward Euler.
 
-### Bubble Dynamics
-We will follow [this paper](http://www.cs.columbia.edu/cg/doublebubbles/doublebubbles.pdf) to simulate the way bubbles evolve over time.
+### 3D Deformation
 
-#### One bubble with Dirichlet boundary
-We will start with one bubble with Dirichlet boundary without any optimization.
+3D deformation deforms a mesh but tries to preserve as much details as possible. Here are two motivating examples:
+![horse_deformation](https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/master/figures/example_img1.png?raw=true)
+![beast_deformation](https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/master/figures/example_img2.png?raw=true)
 
-__TODO: PDE WITH DIRICHLET BOUNDARY AND UPDATE RULE__
+We will implement the following:
 
-#### Multiple interacting bubbles and optimization
-After we get one bubble dynamics to work, we will try implemeting multiple interacting bubbles and optimizing the program to make things faster. 
+1. Create an API for the user to select several control points for surface deformation;
+2. Create a data structure that holds control points;
+3. Update each vertex's position depending on the new position of control points and different update rules; 
+4. Repeat step 3 until convergence.
 
-__TODO: NEED SOME MOTIVATING IMAGES__
+There are several reasonable rules for updating the vertex position. We will implement [shape preserving mesh deformation](https://www.cs.ubc.ca/~vlady/Papers/sketch_0268.pdf) and, if time permits, a differential method that minimizes an energy function in using laplacian coordinates to update the position, as described in Chapter 3 of [this paper](http://www.gmrv.es/~aperez/PFM_Alvaro_Perez.pdf).
+
+#### Global vs local (Need guidance)
+
+We intend to implement an API that does not allow the user to choose a region of interest to deform, but only control points. The deformation carried out by update rules will be global. We think it will be easier to start with, but it seems that the ability to select a region of interest makes a lot of sense. Can we make region of interest an optional bullet point we can choose to implement if we have time?
+
+__NOTE:__ Also we make implementing mesh deformation as energy minimization problem as extended work if time permits.
