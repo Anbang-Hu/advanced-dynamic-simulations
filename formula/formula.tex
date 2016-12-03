@@ -1,0 +1,41 @@
+\documentclass[11pt]{article}
+
+\begin{document}
+
+%\[ P = n_x x + n_y y + n_z z + d\]
+%
+%\[n = (n_x,n_y,n_z)\]
+%
+%\[ d = -\displaystyle\sum_{i = 1} ^ m n\cdot v_i \]
+%
+%\[ v' = \displaystyle\sum_{i = 1} ^ m w_i v_i'  \]
+%
+%
+%\[ h_i = \|v' - v_i'\|\cot(\beta_i) + (v_i - v_i') \cdot n \]
+%\[ v = v' + n\frac{1}{m} \displaystyle\sum_{i = 1}^m h_i  \]
+%
+%
+%\[ v_i = v_i' + n\frac{1}{m} \displaystyle\sum_{i = 1}^m h_i \]
+
+
+\[ u^{t+1} = u^t + \tau f(u^{t+1}) \]
+
+\[  u_i^{t+1} = u_i^t + 0.5 \tau \sum_j (\cot\alpha_{ij} + \cot\beta_{ij})(u_j^{t+1} - u_i^{t+1}) \]
+
+
+\[ 0 = 0.5 \tau \sum_j (\cot\alpha_{ij} + \cot\beta_{ij}) u_j^{t+1} -
+    (0.5 \tau\sum_j (\cot\alpha_{ij} + \cot\beta_{ij}) - 1) u_i^{t+1} +
+    u_i^t  \]
+    
+    
+    \[ Bu = 0 \]
+    
+\[ \textbf{Initialization} \quad u^{t+1} = u^t  \]        
+\[ \textbf{Loop until convergence}  \quad  u^{t+1}= u^t + \tau f(u^{t+1})\]
+
+
+
+\[ u^{t+1}= u^t + 0.5\tau (f(u^t) + f(u^{t+1})) \]
+
+\[u^{t+1}= u^t + 0.5\tau (f(u^t) + f(u^t + \tau f(u^t))) \]
+\end{document}
