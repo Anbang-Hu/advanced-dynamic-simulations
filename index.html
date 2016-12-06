@@ -27,14 +27,7 @@
 <h3>
 <a id="overview" class="anchor" href="#overview" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Overview</h3>
 
-<p>We will implement </p>
-
-<ul>
-<li>solvers more advanced than forward Euler and simplectic Euler</li>
-<li>some 3D deformation algorithm(s)</li>
-</ul>
-
-<p>based on Scotty3D.</p>
+<p>We will implement solvers more advanced than forward Euler and simplectic Euler based on Scotty3D.</p>
 
 <h3>
 <a id="advanced-solvers" class="anchor" href="#advanced-solvers" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Advanced Solvers</h3>
@@ -108,31 +101,6 @@ u(t+1) = u(t) + tau * f(u(t+1))
 <p>We will implement improved Euler in <code>Mesh::improved_euler()</code> in <code>mesh.cpp</code>.</p>
 
 <p>We expect more stable result from improved Euler than from forward Euler.</p>
-
-<h3>
-<a id="3d-deformation" class="anchor" href="#3d-deformation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>3D Deformation</h3>
-
-<p>3D deformation deforms a mesh but tries to preserve as much details as possible. Here are two motivating examples:
-<img src="https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/master/figures/example_img1.png?raw=true" alt="horse_deformation">
-<img src="https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/master/figures/example_img2.png?raw=true" alt="beast_deformation"></p>
-
-<p>We will implement the following:</p>
-
-<ol>
-<li>Create an API for the user to select several control points for surface deformation;</li>
-<li>Create a data structure that holds control points;</li>
-<li>Update each vertex's position depending on the new position of control points and different update rules; </li>
-<li>Repeat step 3 until convergence.</li>
-</ol>
-
-<p>There are several reasonable rules for updating the vertex position. We will implement <a href="https://www.cs.ubc.ca/%7Evlady/Papers/sketch_0268.pdf">shape preserving mesh deformation</a> and, if time permits, a differential method that minimizes an energy function in using laplacian coordinates to update the position, as described in Chapter 3 of <a href="http://www.gmrv.es/%7Eaperez/PFM_Alvaro_Perez.pdf">this paper</a>.</p>
-
-<h4>
-<a id="global-vs-local-need-guidance" class="anchor" href="#global-vs-local-need-guidance" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Global vs local (Need guidance)</h4>
-
-<p>We intend to implement an API that does not allow the user to choose a region of interest to deform, but only control points. The deformation carried out by update rules will be global. We think it will be easier to start with, but it seems that the ability to select a region of interest makes a lot of sense. Can we make region of interest an optional bullet point we can choose to implement if we have time?</p>
-
-<p><strong>NOTE:</strong> Also we make implementing mesh deformation as energy minimization problem as extended work if time permits.</p>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/Haboric-Hu/advanced-dynamic-simulations">Advanced-dynamic-simulations</a> is maintained by <a href="https://github.com/Haboric-Hu">Haboric-Hu</a>.</span>
