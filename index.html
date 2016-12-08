@@ -32,8 +32,24 @@
 <h3>
 <a id="advanced-solvers" class="anchor" href="#advanced-solvers" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Advanced Solvers</h3>
 
-<p>We have implemented forward Euler and simplectic Euler in Assignment 4. We will explore another two stable integration methods - <a href="https://math.la.asu.edu/%7Edajones/class/275/ch2.pdf">backward Euler and improved Euler</a>.
-<img src="https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/master/figures/example_img4.png?raw=true" alt="bunny_wave"></p>
+<p>We have implemented forward Euler and simplectic Euler in Assignment 4. We will explore another two stable integration methods - <a href="https://math.la.asu.edu/%7Edajones/class/275/ch2.pdf">improved Euler and backward Euler</a>.</p>
+
+<h4>
+<a id="improved-euler" class="anchor" href="#improved-euler" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Improved Euler</h4>
+
+<p>Forward Euler can be improved by considering</p>
+
+<pre><code>u(t+1) = u(t) + 0.5 * tau * (f(u(t)) + f(u(t+1)))
+</code></pre>
+
+<p>In order to get rid of implicit term <code>f(u(t+1))</code>, we can apply forward Euler to <code>u(t+1)</code> inside <code>f(u(t+1))</code>. Then the improved Euler update rule is:</p>
+
+<pre><code>u(t+1) = u(t) + 0.5 * tau * (f(u(t)) + f(u(t) + tau * f(u(t))))
+</code></pre>
+
+<p>We will implement improved Euler in <code>Mesh::improved_euler()</code> in <code>mesh.cpp</code>.</p>
+
+<p>We expect more stable result from improved Euler than from forward Euler.</p>
 
 <h4>
 <a id="backward-euler" class="anchor" href="#backward-euler" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Backward Euler</h4>
@@ -84,23 +100,6 @@ u(t+1) = u(t) + tau * f(u(t+1))
 <p>according to which we can build a matrix <code>B</code> of size (V+1)-by-(V+1), where V is the number of vertices in the mesh. Each row of <code>B</code> corresponds to the coefficients of one linear equation. The coefficients are arranged in correspondence with <code>u = (u(0,t+1), u(1,t+1),...,u(V-1,t+1), 1)</code>. We can then solve the linear system <code>Bu = 0</code> to get each <code>u(i,t+1)</code>.</p>
 
 <p>We expect that solving linear system can potentially improve the performance of the program.</p>
-
-<h4>
-<a id="improved-euler" class="anchor" href="#improved-euler" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Improved Euler</h4>
-
-<p>Forward Euler can be improved by considering</p>
-
-<pre><code>u(t+1) = u(t) + 0.5 * tau * (f(u(t)) + f(u(t+1)))
-</code></pre>
-
-<p>In order to get rid of implicit term <code>f(u(t+1))</code>, we can apply forward Euler to <code>u(t+1)</code> inside <code>f(u(t+1))</code>. Then the improved Euler update rule is:</p>
-
-<pre><code>u(t+1) = u(t) + 0.5 * tau * (f(u(t)) + f(u(t) + tau * f(u(t))))
-</code></pre>
-
-<p>We will implement improved Euler in <code>Mesh::improved_euler()</code> in <code>mesh.cpp</code>.</p>
-
-<p>We expect more stable result from improved Euler than from forward Euler.</p>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/Haboric-Hu/advanced-dynamic-simulations">Advanced-dynamic-simulations</a> is maintained by <a href="https://github.com/Haboric-Hu">Haboric-Hu</a>.</span>
