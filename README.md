@@ -6,8 +6,21 @@ Student Names: Anbang Hu, Yang Yu
 We will implement solvers more advanced than forward Euler and simplectic Euler based on Scotty3D.
 
 ### Advanced Solvers
-We have implemented forward Euler and simplectic Euler in Assignment 4. We will explore another two stable integration methods - [backward Euler and improved Euler](https://math.la.asu.edu/~dajones/class/275/ch2.pdf).
-![bunny_wave](https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/master/figures/example_img4.png?raw=true)
+We have implemented forward Euler and simplectic Euler in Assignment 4. We will explore another two stable integration methods - [improved Euler and backward Euler](https://math.la.asu.edu/~dajones/class/275/ch2.pdf).
+
+#### Improved Euler
+Forward Euler can be improved by considering
+```
+u(t+1) = u(t) + 0.5 * tau * (f(u(t)) + f(u(t+1)))
+```
+In order to get rid of implicit term ```f(u(t+1))```, we can apply forward Euler to ```u(t+1)``` inside ```f(u(t+1))```. Then the improved Euler update rule is:
+```
+u(t+1) = u(t) + 0.5 * tau * (f(u(t)) + f(u(t) + tau * f(u(t))))
+```
+We will implement improved Euler in ```Mesh::improved_euler()``` in ```mesh.cpp```.
+
+We expect more stable result from improved Euler than from forward Euler.
+
 
 #### Backward Euler
 Backward Euler update rule
@@ -52,16 +65,3 @@ where ```u(i,t)``` is the configuration of the vertex with index ```i``` at time
 according to which we can build a matrix ```B``` of size (V+1)-by-(V+1), where V is the number of vertices in the mesh. Each row of ```B``` corresponds to the coefficients of one linear equation. The coefficients are arranged in correspondence with ```u = (u(0,t+1), u(1,t+1),...,u(V-1,t+1), 1)```. We can then solve the linear system ```Bu = 0``` to get each ```u(i,t+1)```.
 
 We expect that solving linear system can potentially improve the performance of the program.
-
-#### Improved Euler
-Forward Euler can be improved by considering
-```
-u(t+1) = u(t) + 0.5 * tau * (f(u(t)) + f(u(t+1)))
-```
-In order to get rid of implicit term ```f(u(t+1))```, we can apply forward Euler to ```u(t+1)``` inside ```f(u(t+1))```. Then the improved Euler update rule is:
-```
-u(t+1) = u(t) + 0.5 * tau * (f(u(t)) + f(u(t) + tau * f(u(t))))
-```
-We will implement improved Euler in ```Mesh::improved_euler()``` in ```mesh.cpp```.
-
-We expect more stable result from improved Euler than from forward Euler.
