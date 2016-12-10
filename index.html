@@ -24,7 +24,7 @@
 
 <p>Student Names: Anbang Hu, Yang Yu</p>
 
-<p><em>Note</em>: Proposal can be found <a href="https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/master/formula/Advanced%20Dynamic%20Simulations%20-%20Proposal.pdf">here</a>. When writing proposal, we did not present in great details what we intended to do, because we had few clue on what was actually coming in this project. As we proceed, the whole picture starts to emerge. Thus, we present detailed tasks in this writeup. </p>
+<p><em>Note</em>: Proposal can be found <a href="https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/master/formula/Advanced%20Dynamic%20Simulations%20-%20Proposal.pdf">here</a>. When writing the proposal, we did not present in great details what we intended to do, because we had few clue on what was actually coming in this project. As we proceed, the whole picture starts to become clear. Thus, we present detailed tasks in this writeup. </p>
 
 <h3>
 <a id="overview" class="anchor" href="#overview" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Overview</h3>
@@ -67,10 +67,13 @@
 
 <p>Fortunately, we can improve forward Euler by taking into account of both derivatives at current timestep and next timestep. The formulation for improved Euler for wave equation can be found <a href="https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/master/formula/Wave_Equation_With_Improved_Euler.pdf">here</a>.</p>
 
-<p>We code up improved Euler for wave equation in <code>Mesh::improved_euler_wave()</code> in <code>mesh.cpp</code>:
-1. calculate new velocity based on current offset and velocity for each vertex and store them in temporary variables,
-2. calculate new offset based on current offset, current velocity and new velocity for each vertex and store them in temporary variables,
-3. update velocity and offset for each vertex.</p>
+<p>We code up improved Euler for wave equation in <code>Mesh::improved_euler_wave()</code> in <code>mesh.cpp</code>:</p>
+
+<ol>
+<li>calculate new velocity based on current offset and velocity for each vertex and store them in temporary variables,</li>
+<li>calculate new offset based on current offset, current velocity and new velocity for each vertex and store them in temporary variables,</li>
+<li>update velocity and offset for each vertex.</li>
+</ol>
 
 <p>Although running for a sufficiently long time still blows up the mesh, running for the same duration as in section Forward Euler gives better result:
 <img src="https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/master/figures/improved_euler_wave_bunny.png?raw=true" alt="Improved Euler (Wave)"></p>
@@ -97,11 +100,14 @@
 <h4>
 <a id="fixed-point-iteration" class="anchor" href="#fixed-point-iteration" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed Point Iteration</h4>
 
-<p>We describe fixed point iteration for wave equation <a href="https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/master/formula/Wave_Equation_With_Backward_Euler__Fixed_Point_Iteration_.pdf">here</a> and implement it in <code>Mesh::backward_euler_fixedpoint_wave()</code> in <code>mesh.cpp</code>:
-1. create temporary variables to store current velocity and offset for each vertex,
-2. for vertex <code>v</code>, calculate new velocity based on current velocity, <code>v-&gt;offset</code> and <code>v-&gt;velocity</code> and store it in <code>v-&gt;velocity</code>,
-3. for vertex <code>v</code>, calculate new offset based on current offset, <code>v-&gt;velocity</code>,
-4. run step 2 and step 3 for several times.</p>
+<p>We describe fixed point iteration for wave equation <a href="https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/master/formula/Wave_Equation_With_Backward_Euler__Fixed_Point_Iteration_.pdf">here</a> and implement it in <code>Mesh::backward_euler_fixedpoint_wave()</code> in <code>mesh.cpp</code>:</p>
+
+<ol>
+<li>create temporary variables to store current velocity and offset for each vertex,</li>
+<li>for vertex <code>v</code>, calculate new velocity based on current velocity, <code>v-&gt;offset</code> and <code>v-&gt;velocity</code> and store it in <code>v-&gt;velocity</code>,</li>
+<li>for vertex <code>v</code>, calculate new offset based on current offset, <code>v-&gt;velocity</code>,</li>
+<li>run step 2 and step 3 for several times.</li>
+</ol>
 
 <p>Even with large initial offset, the result from fixed point iteration is rather smooth:
 <img src="https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/master/figures/backward_euler_fixedpoint_bunny.png?raw=true" alt="Backward Euler Fixed Point (Wave)"></p>
@@ -126,20 +132,28 @@
 <li><a href="http://www.cs.cmu.edu/%7Ekmcrane/Projects/DGPDEC/paper.pdf">matrix method</a></li>
 </ul>
 
-<p>To support heat equation, we 
-1. add a field <code>temperature</code> at each vertex;
-2. initialize <code>temperature</code> to zero at vertex creation;
-3. modify <code>Vertex::laplacian</code> to allow computing discrete laplacian for heat equation,
-4. <strong>TODO</strong> add <code>draw_color</code> to color the mesh;
-5. <strong>TODO</strong> add functionality to allow users to select a vertex and adjust its temperature.</p>
+<p>To support heat equation, we </p>
+
+<ol>
+<li>add a field <code>temperature</code> at each vertex;</li>
+<li>initialize <code>temperature</code> to zero at vertex creation;</li>
+<li>modify <code>Vertex::laplacian</code> to allow computing discrete laplacian for heat equation,</li>
+<li>
+<strong>TODO</strong> add <code>draw_color</code> to color the mesh;</li>
+<li>
+<strong>TODO</strong> add functionality to allow users to select a vertex and adjust its temperature.</li>
+</ol>
 
 <h4>
 <a id="fixed-point-iteration-1" class="anchor" href="#fixed-point-iteration-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed Point Iteration</h4>
 
-<p>We describe fixed point iteration for heat equation <a href="https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/master/formula/Heat_Equation_With_Backward_Euler__Fixed_Point_Iteration_.pdf">here</a>. We implement it in <code>Mesh::backward_euler_fixedpoint_heat()</code> in <code>mesh.cpp</code>:
-1. create temporary variables to store current temperature for each vertex,
-2. calculate new temperature for each vertex <code>v</code> based on current temperature and <code>v-&gt;temperature</code>, and store it in <code>v-&gt;temperature</code>,
-3. run step 2 for several times.</p>
+<p>We describe fixed point iteration for heat equation <a href="https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/master/formula/Heat_Equation_With_Backward_Euler__Fixed_Point_Iteration_.pdf">here</a>. We implement it in <code>Mesh::backward_euler_fixedpoint_heat()</code> in <code>mesh.cpp</code>:</p>
+
+<ol>
+<li>create temporary variables to store current temperature for each vertex,</li>
+<li>calculate new temperature for each vertex <code>v</code> based on current temperature and <code>v-&gt;temperature</code>, and store it in <code>v-&gt;temperature</code>,</li>
+<li>run step 2 for several times.</li>
+</ol>
 
 <p><strong>TODO</strong> present result</p>
 
