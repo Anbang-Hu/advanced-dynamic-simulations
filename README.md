@@ -49,7 +49,7 @@ There are numerous ways to solve backward Euler. We experiment on two of them:
 - [fixed point iteration](https://en.wikipedia.org/wiki/Fixed-point_iteration)
 - [Newton–Raphson method](https://en.wikipedia.org/wiki/Newton%27s_method)
 
-__Fixed Point Iteration__
+#### Fixed Point Iteration
 We describe fixed point iteration for wave equation [here](https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/master/formula/Wave_Equation_With_Backward_Euler__Fixed_Point_Iteration_.pdf) and implement it in ```Mesh::backward_euler_fixedpoint_wave()``` in ```mesh.cpp```:
 1. create temporary variables to store current velocity and offset for each vertex,
 2. for vertex ```v```, calculate new velocity based on current velocity, ```v->offset``` and ```v->velocity``` and store it in ```v->velocity```,
@@ -59,7 +59,7 @@ We describe fixed point iteration for wave equation [here](https://github.com/Ha
 Even with large initial offset, the result from fixed point iteration is rather smooth:
 ![Backward Euler Fixed Point (Wave)](https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/master/figures/backward_euler_fixedpoint_bunny.png?raw=true)
 
-__Newton–Raphson method__
+#### Newton–Raphson method
 We descibe Newton-Raphson method for wave equation here and implement it in ```Mesh::backward_euler_newton_wave()``` in ```mesh.cpp```:
 
 __TODO__ implementation details and result
