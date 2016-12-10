@@ -1,0 +1,65 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[a4paper, margin=1in]{geometry}
+\usepackage{natbib}
+\usepackage{graphicx}
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{parskip}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue
+}
+
+\setlength\parindent{0pt}
+
+\begin{document}
+\section*{Wave Equation With Backward Euler (Newton Method)}
+We will solve wave equation 
+\begin{equation} \label{eq:wave_eq}
+u^{\prime\prime} = \Delta u - \lambda u^{\prime}
+\end{equation}
+using backward Euler with Newton Method.
+
+First we break Eq(\ref{eq:wave_eq}) into two equation:
+\begin{equation}\label{eq:offset_part}
+u^{\prime} = v
+\end{equation}
+\begin{equation}\label{eq:velocity_part}
+v^{\prime} = \Delta u - \lambda v
+\end{equation}
+
+We use the discrete Laplacian operator for triangle meshes:
+\begin{equation} \label{eq:discrete_laplacian_op}
+\Delta u_i = \frac{1}{2}\sum_{j} (\cot{\alpha_{ij}} + \cot{\beta_{ij}})(u_j - u_i)
+\end{equation}
+
+Applying backward Euler to Eq(\ref{eq:offset_part}, \ref{eq:velocity_part}) and using Eq(\ref{eq:discrete_laplacian_op}), we get fixed point update rules for each vertex $i$:
+\begin{equation}\label{eq:initialization_velocity}
+v_i^{k+1} = v_i^{k}
+\end{equation}
+\begin{equation}\label{eq:initialization_offset}
+u_i^{k+1} = u_i^{k}
+\end{equation}
+\begin{equation}\label{eq:update_velocity}
+v_i^{k+1} = v_i^{k} + \tau (\Delta u_i^{k+1} - \lambda v_i^{k+1})
+\end{equation}
+\begin{equation}\label{eq:update_offset}
+u_i^{k+1} = u_i^{k} + \tau v_i^{k+1}
+\end{equation}
+\begin{equation}\label{eq:update_velocity_subs}
+v_i^{k+1} = v_i^{k} + \tau \left[\frac{1}{2}\sum_{j} (\cot\alpha_{ij}+\cot\beta_{ij})(u_j^{k+1} - u_i^{k+1}) - \lambda v_i^{k+1}\right]
+\end{equation}
+
+where $\alpha_{ij}$ and $\beta_{ij}$ are computed based on offsets at timestep $k+1$.
+
+After initializing velocity and offset for each vertex using Eqs(\ref{eq:initialization_velocity}, \ref{eq:initialization_offset}), we run Eqs(\ref{eq:update_velocity}, \ref{eq:update_offset}) for each vertex.
+In Eq({\ref{eq:update_velocity_subs}), we are going to use Newton Method to compute $v_i^{k+1}$. So we rewrite it as 
+\begin{equation}
+F(v_i^{k+1}) = (1 + \lambda) v_i^{k+1}  - v_i^{k}  -  \tau \left[\frac{1}{2}\sum_{j} (\cot\alpha_{ij}+\cot\beta_{ij})(u_j^{k+1} - u_i^{k+1})\right]
+\end{equation}
+And using the following Newton Iteration to get $v_i^{k+1}$
+\begin{equation}
+	v_i^{{k+1}[n+1]} = v_i^{{k+1}[n]} - \frac{F(v_i^{{k+1}[n]})}{F'(v_i^{{k+1}[n]})}
+\end{equation}
+\end{document}
