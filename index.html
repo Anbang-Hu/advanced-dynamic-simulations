@@ -29,7 +29,7 @@
 <h3>
 <a id="overview" class="anchor" href="#overview" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Overview</h3>
 
-<p>We have implemented forward Euler and simplectic Euler in <a href="http://15462.courses.cs.cmu.edu/fall2016/article/28">A4</a>. In this project, we implement <a href="https://math.la.asu.edu/%7Edajones/class/275/ch2.pdf">improved Euler and backward Euler</a> within the framework of Scotty3D.</p>
+<p>We have implemented forward Euler and simplectic Euler in <a href="http://15462.courses.cs.cmu.edu/fall2016/article/28">A4</a>. In this project, we implement <a href="https://math.la.asu.edu/%7Edajones/class/275/ch2.pdf">improved Euler and backward Euler</a> for both wave and heat equation within the framework of Scotty3D. When implementing the backward Euler, we try different  methods to solve the equation, e.g, Fixed-point iteration, Newton's Method, Linear System.Also,we support solving the heat equation in forward Euler.(Implementation is in <code>mesh.h</code>, <code>mesh.cpp</code>.)</p>
 
 <h3>
 <a id="enhanced-viewer" class="anchor" href="#enhanced-viewer" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Enhanced Viewer</h3>
@@ -37,11 +37,13 @@
 <p>In order to visualize the effects from advanced solvers, we enhance the viewer from <a href="http://15462.courses.cs.cmu.edu/fall2016/article/28">A4</a> in the following way:</p>
 
 <ul>
-<li>We add <code>Action::Heat</code> to the viewer to allow users  to simulate heat diffusion on objects.</li>
+<li>We add visualization for temperature to the viewer to allow users  to simulate heat diffusion on objects.</li>
 <li>We also modify the viewer to allow users to use 
 
 <ol>
+<li>forward Euler for heat equation</li>
 <li>improved Euler for wave equation</li>
+<li>improved Euler for heat equation</li>
 <li>backward Euler for wave equation</li>
 <li>backward Euler for heat equation</li>
 </ol>
@@ -113,16 +115,45 @@
 <img src="https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/master/figures/backward_euler_fixedpoint_bunny.png?raw=true" alt="Backward Euler Fixed Point (Wave)"></p>
 
 <h4>
-<a id="newtonraphson-method" class="anchor" href="#newtonraphson-method" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Newton–Raphson method</h4>
+<a id="newtons-method" class="anchor" href="#newtons-method" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Newton's method</h4>
 
-<p>We descibe Newton-Raphson method for wave equation here and implement it in <code>Mesh::backward_euler_newton_wave()</code> in <code>mesh.cpp</code>:</p>
+<p>We descibe Newton's method for wave equation <a href="https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/master/formula/Wave_Equation_With_Backward_Euler_Newton_Method_.pdf">here</a> and implement it in <code>Mesh::backward_euler_newton_wave()</code> in <code>mesh.cpp</code>:
+1. create temporary variables to store velocity  for each vertex in each iteration,
+2. for vertex <code>v</code>, calculate new velocity and new offset using Newton's Method and store it in <code>v-&gt;velocity</code> and <code>v-&gt;offset</code>,(one iteration of Newton Method)
+3. run step 2 for several times to get the final result for <code>v-&gt;velocity</code>
+4. for vertex <code>v</code>, calculate new offset based on current offset, and add <code>v-&gt;velocity * timestep</code>,</p>
 
-<p><strong>TODO</strong> implementation details and result</p>
+<p>Newton's method can produces smoother result:
+<img src="https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/master/figures/backward_euler_newton_wave_bunny.png?raw=true" alt="Backward Euler Newton (Wave)"></p>
 
-<p><em>Note</em>: Though stable, both fixed point iteration and Newton-Raphson are iterative methods. They need to run several iteration for each vertex update, which slows down the computation, which in turn slows down the video playback.</p>
+<p><em>Note</em>: Though stable, both fixed point iteration and Newton's are iterative methods. They need to run several iteration for each vertex update, which slows down the computation, which in turn slows down the video playback.</p>
 
 <h3>
 <a id="heat-equation" class="anchor" href="#heat-equation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Heat Equation</h3>
+
+<h4>
+<a id="forward-euler-1" class="anchor" href="#forward-euler-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Forward Euler</h4>
+
+<p>First we use forward Euler to solve the heat equation. We described our algorithm <a href="https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/master/formula/Heat_Equation_With_Forward_Euler_.pdf">here</a>.And the result is shown below.
+<img src="https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/cf3c043f729a600385f9750eeaaf23dc52202876/figures/forward_euler_heat0.png?raw=true" alt="Forward Euler (Heat)0">
+<img src="https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/cf3c043f729a600385f9750eeaaf23dc52202876/figures/forward_euler_heat1.png?raw=true" alt="Forward Euler (Heat)1">
+<img src="https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/cf3c043f729a600385f9750eeaaf23dc52202876/figures/forward_euler_heat2.png?raw=true" alt="Forward Euler (Heat)2">
+<img src="https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/cf3c043f729a600385f9750eeaaf23dc52202876/figures/forward_euler_heat3.png?raw=true" alt="Forward Euler (Heat)3">
+<img src="https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/cf3c043f729a600385f9750eeaaf23dc52202876/figures/forward_euler_heat4.png?raw=true" alt="Forward Euler (Heat)4"></p>
+
+<h4>
+<a id="improved-euler-1" class="anchor" href="#improved-euler-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Improved Euler</h4>
+
+<p>We also use improved Euler to solve the heat equation. We described our algorithm <a href="https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/master/formula/Heat_Equation_With_Improved_Euler_.pdf">here</a>.And the result is shown below
+<img src="https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/cf3c043f729a600385f9750eeaaf23dc52202876/figures/improved_euler_heat0.png?raw=true" alt="Improved Euler (Heat)0">
+<img src="https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/cf3c043f729a600385f9750eeaaf23dc52202876/figures/improved_euler_heat1.png?raw=true" alt="Improved Euler (Heat)1">
+<img src="https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/cf3c043f729a600385f9750eeaaf23dc52202876/figures/improved_euler_heat2.png?raw=true" alt="Improved Euler (Heat)2">
+<img src="https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/cf3c043f729a600385f9750eeaaf23dc52202876/figures/improved_euler_heat3.png?raw=true" alt="Improved Euler (Heat)3"></p>
+
+<p><img src="https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/cf3c043f729a600385f9750eeaaf23dc52202876/figures/improved_euler_heat4.png?raw=true" alt="Improved Euler (Heat)4"></p>
+
+<h4>
+<a id="backward-euler-1" class="anchor" href="#backward-euler-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Backward Euler</h4>
 
 <p>Results from wave equation suggests that backward Euler works better than other update rules. We focus on ONLY <strong>backward Euler</strong> for heat equation, and explore both iterative methods and matrix method:</p>
 
@@ -132,40 +163,50 @@
 <li><a href="http://www.cs.cmu.edu/%7Ekmcrane/Projects/DGPDEC/paper.pdf">matrix method</a></li>
 </ul>
 
-<p>To support heat equation, we </p>
+<p>To support heat equation, we 
+1. add a field <code>temperature</code> at each vertex;
+2. initialize <code>temperature</code> to 1200 Kelvin at vertex creation (we follow the physics of <a href="https://docs.kde.org/trunk5/en/kdeedu/kstars/ai-blackbody.html">blackbody radiation</a>);
+3. modify <code>Vertex::laplacian</code> to allow computing discrete laplacian for heat equation,
+4. modify <code>Mesh::draw_faces</code> to allow mesh coloring using <code>temperature_to_rgb</code> based on temperature at each vertex;
+5. modify <code>Application::keyboard_event()</code> to allow users to adjust the temperature of selected vertex;
+6. follow <a href="http://www.tannerhelland.com/4435/convert-temperature-rgb-algorithm-code/">this post</a> to add <code>temperature_to_rgb()</code> in <code>mesh.cpp</code> to convert temperature into rgb color;
+7. modify <code>Application::draw_action()</code> in <code>application.cpp</code> to display temperature of selected vertex.</p>
 
-<ol>
-<li>add a field <code>temperature</code> at each vertex;</li>
-<li>initialize <code>temperature</code> to zero at vertex creation;</li>
-<li>modify <code>Vertex::laplacian</code> to allow computing discrete laplacian for heat equation,</li>
-<li>
-<strong>TODO</strong> add <code>draw_color</code> to color the mesh;</li>
-<li>
-<strong>TODO</strong> add functionality to allow users to select a vertex and adjust its temperature.</li>
-</ol>
-
-<h4>
-<a id="fixed-point-iteration-1" class="anchor" href="#fixed-point-iteration-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed Point Iteration</h4>
+<h5>
+<a id="fixed-point-iteration-1" class="anchor" href="#fixed-point-iteration-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed Point Iteration</h5>
 
 <p>We describe fixed point iteration for heat equation <a href="https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/master/formula/Heat_Equation_With_Backward_Euler__Fixed_Point_Iteration_.pdf">here</a>. We implement it in <code>Mesh::backward_euler_fixedpoint_heat()</code> in <code>mesh.cpp</code>:</p>
 
 <ol>
 <li>create temporary variables to store current temperature for each vertex,</li>
 <li>calculate new temperature for each vertex <code>v</code> based on current temperature and <code>v-&gt;temperature</code>, and store it in <code>v-&gt;temperature</code>,</li>
-<li>run step 2 for several times.</li>
+<li>run step 2 for several times.
+The result is shown below
+<img src="https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/cf3c043f729a600385f9750eeaaf23dc52202876/figures/backward_euler_fixedpoint_heat0.png?raw=true" alt="Backward Euler Fixed Point (Heat)0">
+<img src="https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/cf3c043f729a600385f9750eeaaf23dc52202876/figures/backward_euler_fixedpoint_heat1.png?raw=true" alt="Backward Euler Fixed Point (Heat)1">
+<img src="https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/cf3c043f729a600385f9750eeaaf23dc52202876/figures/backward_euler_fixedpoint_heat2.png?raw=true" alt="Backward Euler Fixed Point (Heat)2">
+<img src="https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/cf3c043f729a600385f9750eeaaf23dc52202876/figures/backward_euler_fixedpoint_heat3.png?raw=true" alt="Backward Euler Fixed Point (Heat)3">
+<img src="https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/cf3c043f729a600385f9750eeaaf23dc52202876/figures/backward_euler_fixedpoint_heat4.png?raw=true" alt="Backward Euler Fixed Point (Heat)4">
+</li>
 </ol>
 
-<p><strong>TODO</strong> present result</p>
+<h5>
+<a id="newtons-method-1" class="anchor" href="#newtons-method-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Newton's Method</h5>
 
-<h4>
-<a id="newton-raphson-method" class="anchor" href="#newton-raphson-method" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Newton-Raphson Method</h4>
+<p>We describe Newton's for heat equation <a href="https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/master/formula/Heat_Equation_With_Backward_Euler_Newton_Method_.pdf">here</a>. We implement it in <code>Mesh::backward_euler_newton_heat()</code> in <code>mesh.cpp</code>:
+1. create temporary variables to store current temperature for each vertex,
+2. calculate new temperature using Newton Method  for each vertex <code>v</code> based on current temperature and <code>v-&gt;temperature</code>, and store it in <code>v-&gt;temperature</code>,
+3. run step 2 for several times to get the final temperature for each vertex.</p>
 
-<p>We describe Newton-Raphson for heat equation here. We implement it in <code>Mesh::backward_euler_newton_heat()</code> in <code>mesh.cpp</code>:</p>
+<p>The result is shown below
+<img src="https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/1181b5f5a3b114c8bc7cb60fab30bc1eaf21fef6/figures/backward_euler_newton_heat0.png?raw=true" alt="Backward Euler Newton (Heat)0">
+<img src="https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/1181b5f5a3b114c8bc7cb60fab30bc1eaf21fef6/figures/backward_euler_newton_heat1.png?raw=true" alt="Backward Euler Newton (Heat)1">
+<img src="https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/1181b5f5a3b114c8bc7cb60fab30bc1eaf21fef6/figures/backward_euler_newton_heat2.png?raw=true" alt="Backward Euler Newton (Heat)2">
+<img src="https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/1181b5f5a3b114c8bc7cb60fab30bc1eaf21fef6/figures/backward_euler_newton_heat3.png?raw=true" alt="Backward Euler Newton (Heat)3">
+<img src="https://github.com/Haboric-Hu/advanced-dynamic-simulations/blob/1181b5f5a3b114c8bc7cb60fab30bc1eaf21fef6/figures/backward_euler_newton_heat4.png?raw=true" alt="Backward Euler Newton (Heat)4"></p>
 
-<p><strong>TODO</strong> implementation details and result</p>
-
-<h4>
-<a id="power-of-matrix" class="anchor" href="#power-of-matrix" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Power of Matrix</h4>
+<h5>
+<a id="power-of-matrix" class="anchor" href="#power-of-matrix" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Power of Matrix</h5>
 
 <p>As mentioned above, backward Euler implemented using an iterative method tends to be fairly slow. One way to speed it up is to assemble everything into a matrix and solve a big linear system.</p>
 
@@ -196,6 +237,8 @@
 <li><a href="https://en.wikipedia.org/wiki/Newton%27s_method">Wiki: Newton's Method</a></li>
 <li><a href="http://www.cs.cmu.edu/%7Ekmcrane/Projects/DGPDEC/paper.pdf">Discrete Differential Geometry: An Applied Introduction</a></li>
 <li><a href="http://eigen.tuxfamily.org/index.php?title=Main_Page">Eigen</a></li>
+<li><a href="http://www.tannerhelland.com/4435/convert-temperature-rgb-algorithm-code/">How to Convert Temperature (K) to RGB: Algorithm and Sample Code</a></li>
+<li><a href="https://docs.kde.org/trunk5/en/kdeedu/kstars/ai-blackbody.html">Blackbody Radiation</a></li>
 </ul>
 
       <footer class="site-footer">
