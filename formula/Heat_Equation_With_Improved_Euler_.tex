@@ -1,0 +1,83 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[a4paper, margin=1in]{geometry}
+\usepackage{natbib}
+\usepackage{graphicx}
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{parskip}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue
+}
+
+\setlength\parindent{0pt}
+
+\begin{document}
+\section*{Heat Equation With Improved Euler}
+We will solve heat equation 
+\begin{equation} \label{eq:heat_eq}
+u^{\prime} = \alpha \Delta u
+\end{equation}
+using improved Euler. 
+
+We use the discrete Laplacian operator for triangle meshes:
+\begin{equation} \label{eq:discrete_laplacian_op}
+\Delta u_i = \frac{1}{2}\sum_{j} (\cot{\alpha_{ij}} + \cot{\beta_{ij}})(u_j - u_i)
+\end{equation}
+
+Applying improved Euler to Eq(\ref{eq:heat_eq}), we get for each vertex $i$:
+\begin{equation} \label{eq:update_rule}
+u_i^{k+1} = u_i^{k} +  \frac{\tau}{2} \alpha (\Delta u_i^{k} + \Delta u_i^{k+1})
+\end{equation}
+The  problem with this is in $u_i^{k+1}$, which is what we're trying to compute, appears on both sides of the equation.But we will replace the $u_i^{k+1}$ on the right side by the Euler approximation for $u_i^{k+1}$: 
+
+\begin{equation} \label{eq:update_rule_ver}
+	u_i^{k+1} = u_i^{k} +  \frac{\tau}{2} \alpha(\Delta u_i^{k} + \Delta (u_i^{k} + \tau * \Delta u_i^{k}))
+\end{equation}
+Then we update each vertex's temperature using the update rule in Eq \ref{eq:update_rule_ver}.
+%Substituting Eq(\ref{eq:discrete_laplacian_op}) into Eq(\ref{eq:update_rule}), we have
+%
+%\begin{equation} \label{eq:update_final}
+%F(u_i^{k+1}) = -\frac{\tau\alpha}{2} \sum_{j}(\cot \alpha_{ij} + \cot \beta_{ij}) u_j^{k+1} + \left[\frac{\tau\alpha}{2}\sum_{j}(\cot \alpha_{ij} + \cot \beta_{ij}) + 1\right]u_i^{k+1}  - u_i^k = 0
+%\end{equation}
+%
+%We are going to use Newton Method to solve Eq(\ref{eq:update_final}) for $u_i^{k+1}$.
+%And According to Newton Method, we can numerically solve Eq({\ref{eq:update_final}}) by the following iteration
+%\begin{equation} \label{eq:newton_iter}
+%	u_i^{{k+1}[n+1]} = 	u_i^{{k+1}[n]} - \frac{F(u_i^{{k+1}[n]})}{F'(u_i^{{k+1}[n]})}
+%\end{equation}
+
+%Eq(\ref{eq:update_final}) is a linear system, which can be assembled into matrix form and passed into a linear system solver. We assemble all unknowns in the following form:
+%\begin{equation}\label{eq:unknowns}
+%x = \begin{bmatrix}
+%       u_0^{k+1} \\[0.3em]
+%       \vdots \\[0.3em]
+%       u_{n-1}^{k+1}
+%     \end{bmatrix}
+%\end{equation}
+%where $n$ is the number of vertices in the mesh. The coefficients can be assembled into an $n$-by-$n$ matrix $A$:
+%\begin{equation} \label{eq:laplace_mass_matrix}
+%A(i, p) =
+%  \begin{cases}
+%    \frac{\tau\alpha}{2}(\cot \alpha_{ip} + \cot \beta_{ip})     & \quad \text{if } p \text{ is a neighbor of } i\\
+%   -\frac{\tau\alpha}{2}\sum_{j}(\cot \alpha_{ij} + \cot \beta_{ij}) - 1  & \quad \text{if } p = i\\
+%   0 \quad \text{ otherwise}
+%  \end{cases}
+%\end{equation}
+%
+%Since a vertex will usually have a few neighbors in a mesh, $A$ will be a sparse matrix.
+%
+%We also need $b$ on the right side of the linear system. $b$ is constructed by extracting the right hand side of Eq(\ref{eq:update_final}) and put them into corresponding positions:
+%\begin{equation} \label{eq:rhs}
+%b = \begin{bmatrix}
+%       -u_0^{k} \\[0.3em]
+%       \vdots \\[0.3em]
+%       -u_{n-1}^{k}
+%     \end{bmatrix}
+%\end{equation}
+%
+%After everything is assembled, we only need to solve $Ax = b$ for $x$ using \href{http://eigen.tuxfamily.org/index.php?title=Main_Page}{Eigen} package.
+
+\end{document}
+
