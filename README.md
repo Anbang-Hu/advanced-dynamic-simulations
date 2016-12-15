@@ -208,6 +208,7 @@ The default for ```backward_euler_wave``` is to use ```backward_euler_newton_wav
 |Decrease thermal diffusivity for Physical Simulation	|SHIFT + ,|
 |Increase temperature at selected vertex	|.|
 |Decrease temperature at selected vertex	|,|
+To play heat diffusion simulation, press SPACE in Wave action.
 The other key commands are same in the [user guide](http://15462.courses.cs.cmu.edu/fall2016/article/14) in Scotty3D.
 
 ### References
